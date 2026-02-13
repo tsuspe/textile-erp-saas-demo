@@ -1,0 +1,36 @@
+{
+  "exportedAt": "2026-02-13T00:00:00.000Z",
+  "databaseUrl": "[sanitized]",
+  "counts": {
+    "empresa": 2,
+    "temporada": 4,
+    "subfamilia": 4,
+    "cliente": 6
+  },
+  "data": {
+    "empresa": [
+      { "id": 1, "slug": "acme-demo", "nombre": "ACME Textiles" },
+      { "id": 2, "slug": "northwind-demo", "nombre": "Northwind Apparel" }
+    ],
+    "temporada": [
+      { "id": 1, "codigo": "24", "descripcion": "Primavera-Verano 2024" },
+      { "id": 2, "codigo": "25", "descripcion": "Otono-Invierno 2024/2025" },
+      { "id": 3, "codigo": "26", "descripcion": "Primavera-Verano 2025" },
+      { "id": 4, "codigo": "27", "descripcion": "Otono-Invierno 2025/2026" }
+    ],
+    "subfamilia": [
+      { "id": 1, "codigo": "BL", "descripcion": "Blusas" },
+      { "id": 2, "codigo": "CH", "descripcion": "Chaquetas" },
+      { "id": 3, "codigo": "PA", "descripcion": "Pantalones" },
+      { "id": 4, "codigo": "VE", "descripcion": "Vestidos" }
+    ],
+    "cliente": [
+      { "id": 1, "codigo": "C01", "nombre": "Cliente Demo 01", "empresaId": 1 },
+      { "id": 2, "codigo": "C02", "nombre": "Cliente Demo 02", "empresaId": 1 },
+      { "id": 3, "codigo": "C03", "nombre": "Cliente Demo 03", "empresaId": 1 },
+      { "id": 4, "codigo": "C11", "nombre": "Cliente Demo 11", "empresaId": 2 },
+      { "id": 5, "codigo": "C12", "nombre": "Cliente Demo 12", "empresaId": 2 },
+      { "id": 6, "codigo": "C13", "nombre": "Cliente Demo 13", "empresaId": 2 }
+    ]
+  }
+}

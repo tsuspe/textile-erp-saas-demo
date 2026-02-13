@@ -1,0 +1,6 @@
+# app/(app)/tools/almacen/ediwin-parse/requirements.txt
+pandas
+openpyxl
+pdfplumber
+pypdf
+python-dotenv

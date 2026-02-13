@@ -1,0 +1,48 @@
+{
+  "name": "webapp-excel",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "import:maestros": "node prisma/import.cjs",
+    "db:seed": "tsx prisma/seed.ts",
+    "demo-reset": "tsx prisma/demo-reset.ts",
+    "demo-tour:validate": "tsx scripts/demo-tour-validate.ts",
+    "screenshots": "node scripts/screenshots.mjs"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.3",
+    "exceljs": "^4.4.0",
+    "jsonwebtoken": "^9.0.3",
+    "jszip": "^3.10.1",
+    "next": "^16.0.7",
+    "next-auth": "^4.24.13",
+    "pdf-lib": "^1.17.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "socket.io-client": "^4.8.3",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "better-sqlite3": "^12.5.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.6",
+    "prisma": "^6.19.2",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}

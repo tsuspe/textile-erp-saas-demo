@@ -1,0 +1,27 @@
+/* app/(app)/account/notifications/NewNotificationPanel.module.css */
+
+.wrap :global(select) {
+  color-scheme: dark;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+}
+
+/* Opciones */
+.wrap :global(select option),
+.wrap :global(select optgroup) {
+  background-color: #0b1220;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Multi-select padding */
+.wrap :global(select[multiple]) {
+  padding: 0.5rem;
+}
+
+/* Selección (Firefox lo respeta más; Chrome depende) */
+.wrap :global(select[multiple] option:checked) {
+  background: rgba(16, 185, 129, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+}

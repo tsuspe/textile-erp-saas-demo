@@ -1,0 +1,41 @@
+# Dependencies
+**/node_modules/
+
+# Build outputs
+**/.next/
+**/dist/
+**/build/
+**/out/
+
+# Runtime and local data
+.env
+.env.*
+!.env.example
+**/logs/
+**/*.log
+**/tmp/
+**/temp/
+
+# Local storage / uploads / backups
+**/uploads/*
+!**/uploads/.gitkeep
+**/data/backups/
+**/data/globalia/backups/*
+!**/data/globalia/backups/.gitkeep
+!**/data/globalia/backups/README.md
+
+# Python cache
+**/__pycache__/
+**/*.pyc
+
+# Tooling
+.vercel/
+.vscode/
+*.tsbuildinfo
+.DS_Store
+
+# Secret files
+*.pem
+*.key
+*.p12
+*.crt

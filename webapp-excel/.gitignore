@@ -1,0 +1,54 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# next.js
+/.next/
+/out/
+/build/
+
+# env files
+.env
+.env.*
+!.env.example
+
+# logs and temp
+logs/
+*.log
+tmp/
+.cache/
+
+# uploads and local binary assets
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# local databases and exports
+/prisma/dev.db
+/prisma/*.db
+/prisma/*.db-shm
+/prisma/*.db-wal
+/prisma/_export/*.bak
+
+# generated artifacts
+/app/generated/prisma
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# deployment
+.vercel/
+
+# misc
+.DS_Store
+*.pem
+*.key
+*.p12
+*.crt
+*.tsbuildinfo
+next-env.d.ts

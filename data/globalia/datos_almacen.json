@@ -1,0 +1,73 @@
+{
+  "almacen": {
+    "GLO-CAM-1100": { "S": 14, "M": 22, "L": 9, "XL": 3 },
+    "GLO-BLZ-2200": { "36": 6, "38": 11, "40": 15, "42": 8 },
+    "GLO-PAN-3300": { "38": 7, "40": 13, "42": 12, "44": 5 },
+    "GLO-ACC-9000": { "TALLA UNICA": 32 }
+  },
+  "historial_entradas": [
+    {
+      "modelo": "GLO-CAM-1100",
+      "talla": "M",
+      "cantidad": 20,
+      "taller": "Taller Demo A",
+      "fecha": "2026-01-10"
+    },
+    {
+      "modelo": "GLO-BLZ-2200",
+      "talla": "40",
+      "cantidad": 15,
+      "taller": "Taller Demo B",
+      "fecha": "2026-01-11"
+    },
+    {
+      "modelo": "GLO-PAN-3300",
+      "talla": "42",
+      "cantidad": 12,
+      "taller": "Taller Demo C",
+      "fecha": "2026-01-12"
+    }
+  ],
+  "historial_salidas": [
+    {
+      "modelo": "GLO-CAM-1100",
+      "talla": "S",
+      "cantidad": 5,
+      "fecha": "2026-01-18",
+      "pedido": "DEMO-0001",
+      "albaran": "ALB-DEMO-001",
+      "cliente": "Aurora Retail Demo"
+    },
+    {
+      "modelo": "GLO-BLZ-2200",
+      "talla": "38",
+      "cantidad": 4,
+      "fecha": "2026-01-19",
+      "pedido": "DEMO-0002",
+      "albaran": "ALB-DEMO-002",
+      "cliente": "Boreal Uniforms Demo"
+    }
+  ],
+  "info_modelos": {
+    "GLO-CAM-1100": {
+      "descripcion": "Camisa corporativa Orion",
+      "color": "Azul acero",
+      "cliente": "Aurora Retail Demo"
+    },
+    "GLO-BLZ-2200": {
+      "descripcion": "Blazer operativo Atlas",
+      "color": "Gris titanio",
+      "cliente": "Boreal Uniforms Demo"
+    },
+    "GLO-PAN-3300": {
+      "descripcion": "Pantalon tecnico Nova",
+      "color": "Negro",
+      "cliente": "Costa Moda Demo"
+    },
+    "GLO-ACC-9000": {
+      "descripcion": "Accesorio identidad Vega",
+      "color": "Negro carbono",
+      "cliente": "Aurora Retail Demo"
+    }
+  }
+}

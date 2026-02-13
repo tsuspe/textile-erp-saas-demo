@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: fichas_db
+    environment:
+      POSTGRES_USER: fichas
+      POSTGRES_PASSWORD: fichas_pass
+      POSTGRES_DB: fichas
+    ports:
+      - "5432:5432"
+    volumes:
+      - fichas_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  fichas_pgdata:

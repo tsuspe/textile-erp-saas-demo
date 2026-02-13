@@ -1,0 +1,130 @@
+# SaaS Gestion - Public Demo
+
+Demo publicable de una plataforma interna de gestion textil (multi-empresa) con foco en:
+
+- clientes y articulos
+- escandallos y pedidos
+- stock e integraciones de almacen
+- RRHH (fichajes y vacaciones)
+- chat interno, notificaciones y asistente IA
+
+- ⚠️ Este repositorio es una recreación demo con datos sintéticos.
+- La aplicación de producción se ejecuta en entorno privado y no comparte datos reales, infraestructura ni credenciales.
+
+## Features principales
+
+- Multi-tenant con 2 empresas demo.
+- Maestros: clientes, articulos, temporadas, subfamilias.
+- Flujo producto: escandallo -> pedido -> almacen/control.
+- RRHH: control horario, festivos, vacaciones y saldo anual.
+- Chat interno y notificaciones in-app.
+- Asistente IA con herramientas deterministas y fallback demo.
+- Integraciones EDIWIN/Globalia con soporte mock en `DEMO_MODE`.
+
+## Screenshots
+
+![Dashboard](webapp-excel/webapp-excel/docs/images/01-dashboard.png)
+![Clientes](webapp-excel/webapp-excel/docs/images/02-maestros.png)
+![Stock](webapp-excel/webapp-excel/docs/images/03-clientes.png)
+![Escandallos](webapp-excel/webapp-excel/docs/images/04-fichas.png)
+![RRHH](webapp-excel/webapp-excel/docs/images/05-rrhh-control-horario.png)
+![Chat + IA](webapp-excel/webapp-excel/docs/images/06-demo-tour.png)
+
+> Las imágenes actuales son placeholders. Se pueden reemplazar por capturas reales ejecutando la app en local con las credenciales demo.
+
+## Credenciales demo
+
+Password comun por defecto: `demo1234`
+
+- `demo_admin` (`admin.demo@example.com`)
+- `demo_rrhh` (`rrhh.demo@example.com`)
+- `demo_almacen` (`almacen.demo@example.com`)
+
+## Tour recomendado
+
+1. Home -> empresa `acme-demo`.
+2. Maestros -> Clientes / Articulos.
+3. Fichas -> Escandallo demo y Pedido demo.
+4. RRHH -> Control horario y Vacaciones.
+5. Chat -> canal global y canal empresa.
+6. Tools -> Globalia Stock y EDIWIN (mock en demo mode).
+
+## Stack
+
+- Next.js (App Router), React, TypeScript
+- Prisma ORM + PostgreSQL
+- NextAuth (credentials)
+- Socket.IO realtime (servicio `realtime`)
+- Python tools para integraciones (modo real o mock)
+
+## Lo que demuestra este proyecto
+
+- Arquitectura multi-tenant real (empresa en ruta y filtrado por `empresaId`).
+- Control de permisos por rol (admin / rrhh / almacen).
+- Migraciones versionadas y base de datos reproducible con seed demo.
+- Integraciones desacopladas con soporte `DEMO_MODE` (mocks controlados).
+- Separación de servicios (app web + realtime server).
+- Buenas prácticas de publicación: `.env.example`, auditoría de sanitización, documentación técnica.
+
+## Instalacion rapida
+
+```bash
+# 1) Dependencias
+cd webapp-excel && npm install
+cd ../realtime && npm install
+
+# 2) Variables de entorno
+cp webapp-excel/.env.example webapp-excel/.env
+cp realtime/.env.example realtime/.env
+
+# 3) Base de datos
+# Levanta Postgres (ej. docker compose en raiz)
+docker compose up -d db
+
+# 4) Migrar + seed demo
+cd webapp-excel
+npx prisma migrate deploy
+npm run db:seed
+
+# 5) Ejecutar
+# terminal 1
+cd realtime && npm start
+# terminal 2
+cd webapp-excel && npm run dev
+```
+
+## Scripts
+
+En `webapp-excel`:
+
+- `npm run dev`
+- `npm run build`
+- `npm run start`
+- `npm run lint`
+- `npm run db:seed`
+- `npm run demo-reset`
+
+## Estructura
+
+- `webapp-excel/`: app principal
+- `realtime/`: servicio websocket
+- `data/`: datasets demo de integraciones
+- `docs/`: documentacion tecnica y operativa
+- `SANITIZATION_REPORT.md`: auditoria de limpieza
+
+## Seguridad y sanitizacion
+
+- Variables sensibles reemplazadas por placeholders.
+- Datasets reales reemplazados por contenido sintetico.
+- Uploads, backups y binarios sensibles eliminados.
+- Modo demo (`DEMO_MODE=true`) para mocks de integraciones.
+
+Mas detalle: `docs/SECURITY.md` y `SANITIZATION_REPORT.md`.
+
+## Licencia
+
+MIT (`LICENSE`).
+
+## Contribucion
+
+Ver `CONTRIBUTING.md`.

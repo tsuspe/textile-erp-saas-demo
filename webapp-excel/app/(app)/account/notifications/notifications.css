@@ -1,0 +1,24 @@
+/* --- Notificaciones: selects en dark --- */
+select { color-scheme: dark; }
+
+select {
+  background-color: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.9);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 0.75rem;
+}
+
+select option,
+select optgroup {
+  background-color: #0b1220;
+  color: rgba(255,255,255,0.9);
+}
+
+select[multiple] {
+  padding: 0.5rem;
+}
+
+select[multiple] option:checked {
+  background: rgba(16,185,129,0.20);
+  color: rgba(255,255,255,0.95);
+}

@@ -1,0 +1,828 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+
+enum EstadoEscandallo {
+  ESCANDALLO
+  PRODUCCION
+}
+
+enum GroupKey {
+  ADMIN
+  RRHH
+  ALMACEN
+  PRODUCCION
+  PATRONAJE
+  CONTABILIDAD
+}
+
+model Empresa {
+  id     Int    @id @default(autoincrement())
+  slug   String @unique // "jbp" | "buspar"
+  nombre String
+
+  clientes             Cliente[]
+  articulos            Articulo[]
+  escandallos          Escandallo[]
+  pedidos              Pedido[]
+  userEmpresas         UserEmpresa[]
+  timeCompanyVacations TimeCompanyVacation[]
+  chatThreads   ChatThread[]
+  chatMessages  ChatMessage[]
+  notifications Notification[]
+
+
+  // Vacaciones (saldo + solicitudes)
+  timeVacationBalances TimeVacationBalance[]
+  timeVacationRequests TimeVacationRequest[]
+
+  // Control horario
+  timeDays     TimeDay[]
+  timeHolidays TimeHoliday[]
+
+  // --- RRHH / Control horario (cabecera documento) ---
+  cif           String?
+  centroTrabajo String?
+  ccc           String? // Código Cuenta Cotización (C.C.C.)
+  lugarFirma    String? // "MADRID"
+  textoLegal    String? // párrafo legal que sale abajo
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Temporada {
+  id          Int    @id @default(autoincrement())
+  codigo      String @unique
+  descripcion String
+
+  articulos   Articulo[]
+  escandallos Escandallo[] // relación con escandallos
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cliente {
+  id     Int    @id @default(autoincrement())
+  codigo String
+  nombre String
+
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  articulos   Articulo[]
+  escandallos Escandallo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([empresaId, codigo])
+}
+
+model Subfamilia {
+  id          Int    @id @default(autoincrement())
+  codigo      String @unique
+  descripcion String
+
+  articulos Articulo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Articulo {
+  id          Int    @id @default(autoincrement())
+  codigo      String
+  descripcion String
+
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  temporada   Temporada @relation(fields: [temporadaId], references: [id])
+  temporadaId Int
+
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+  clienteId Int
+
+  subfamilia   Subfamilia @relation(fields: [subfamiliaId], references: [id])
+  subfamiliaId Int
+
+  escandallos Escandallo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([empresaId, codigo])
+}
+
+//
+// ESCANDALLO + DETALLE
+//
+
+model Escandallo {
+  id Int @id @default(autoincrement())
+
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+  clienteId Int
+
+  temporada   Temporada @relation(fields: [temporadaId], references: [id])
+  temporadaId Int
+
+  articulo   Articulo? @relation(fields: [articuloId], references: [id])
+  articuloId Int?
+
+  // CABECERA
+  modeloInterno String? // código interno de patrón
+  modeloCliente String? // ref / código del cliente
+  patron        String?
+  talla         String?
+  patronista    String?
+  fecha         DateTime?
+  imagenUrl     String? // ruta o URL de la foto del modelo
+
+  // DETALLE
+  tejidos     EscandalloTejido[]
+  forros      EscandalloForro[]
+  accesorios  EscandalloAccesorio[]
+  otrosGastos EscandalloGasto[]
+
+  // TOTALES + OBS
+  totalCoste      Float? // suma total
+  porcentajeExtra Float   @default(0) // % extra (margen/overhead/merma)
+  observaciones   String?
+
+  // Flujo
+  estado          EstadoEscandallo @default(ESCANDALLO)
+  fechaAprobacion DateTime?
+  // valores previstos: "ESCANDALLO" | "PRODUCCION"
+
+  // 🔹 Relación con pedidos
+  pedidos Pedido[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([empresaId, clienteId, temporadaId])
+  @@index([empresaId, articuloId])
+}
+
+model EscandalloTejido {
+  id Int @id @default(autoincrement())
+
+  escandallo   Escandallo @relation(fields: [escandalloId], references: [id], onDelete: Cascade)
+  escandalloId Int
+
+  proveedor String?
+  serie     String?
+  color     String?
+  anchoReal Float? // cm
+  anchoUtil Float? // cm
+
+  consumoMuestra    String? // "01/10/2025 – 1,45 m"
+  consumoProduccion Float? // metros
+  precio            Float? // €/m
+  coste             Float? // precio * consumoProduccion
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EscandalloForro {
+  id Int @id @default(autoincrement())
+
+  escandallo   Escandallo @relation(fields: [escandalloId], references: [id], onDelete: Cascade)
+  escandalloId Int
+
+  proveedor String?
+  serie     String?
+  color     String?
+  anchoReal Float?
+  anchoUtil Float?
+
+  consumoMuestra    String?
+  consumoProduccion Float?
+  precio            Float?
+  coste             Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EscandalloAccesorio {
+  id Int @id @default(autoincrement())
+
+  escandallo   Escandallo @relation(fields: [escandalloId], references: [id], onDelete: Cascade)
+  escandalloId Int
+
+  // FORNITURAS / ACCESORIOS
+  nombre     String? // entretela, cremallera, etc.
+  proveedor  String?
+  referencia String?
+  color      String?
+
+  medida String?
+
+  unidad       String? // "UNIDADES" | "METROS"
+  cantidad     Float?
+  precioUnidad Float?
+
+  coste Float? // precioUnidad * cantidad
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EscandalloGasto {
+  id Int @id @default(autoincrement())
+
+  escandallo   Escandallo @relation(fields: [escandalloId], references: [id], onDelete: Cascade)
+  escandalloId Int
+
+  // tipo + descripción nos dan flexibilidad
+  tipo        String? // CORTE / CONFECCION / PORTES / OTRO...
+  descripcion String?
+  importe     Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Pedido {
+  id Int @id @default(autoincrement())
+
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  // Siempre cuelga de un escandallo
+  escandallo   Escandallo @relation(fields: [escandalloId], references: [id])
+  escandalloId Int
+
+  // Cabecera pedido
+  numeroPedido String? // Nº pedido
+  fechaPedido  DateTime?
+  fechaEntrega DateTime?
+
+  // Info artículo / modelo
+  modeloInterno     String? // copia de escandallo / artículo, pero editable
+  modeloCliente     String? // referencia cliente
+  patron            String?
+  descripcionPedido String? // “descripción artículo pedido”
+
+  // Importes
+  costeEscandallo Float? // copia de escandallo.totalCoste en el momento de crear
+  precioVenta     Float? // “Precio pedido”
+  pvp             Float? // “PVP etiqueta”
+
+  // Imagen (podemos reutilizar la del escandallo o cambiarla)
+  imagenUrl String?
+
+  // 🔹 CABECERA ALMACÉN
+  tallerCorte  String?
+  fechaCorte   DateTime?
+  albaranCorte String?
+  precioCorte  Float?
+
+  tallerConfeccion  String?
+  fechaConfeccion   DateTime?
+  albaranConfeccion String?
+  precioConfeccion  Float?
+
+  // 🔹 Preparación almacén (perchas, bolsas, etiquetas, etc.)
+  preparacionAlmacen Json?
+
+  // 🔹 NUEVO: Control de calidad (medidas por color / talla)
+  controlCalidad Json?
+
+  comentarios PedidoComentario[]
+
+  // Bloques relacionados
+  tejidos    PedidoTejido[]
+  forros     PedidoForro[]
+  accesorios PedidoAccesorio[]
+  colores    PedidoColor[]
+
+  // Observaciones del pedido
+  observaciones String?
+
+  // 🔹 FACTURACIÓN
+  facturado     Boolean  @default(false)
+  numeroFactura String?
+  fechaFactura  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([empresaId, escandalloId])
+}
+
+model PedidoTejido {
+  id Int @id @default(autoincrement())
+
+  pedido   Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  pedidoId Int
+
+  proveedor String?
+  serie     String?
+  color     String?
+
+  consumoProduccion    Float? // viene de escandallo (editable si quieres)
+  composicion          String?
+  metrosPedidos        Float?
+  fechaPedido          DateTime?
+  // 🔹 ALMACÉN
+  metrosRecibidos      Float?
+  fechaMetrosRecibidos DateTime?
+  consumoCorte         Float? // m por prenda para el corte (puede ser igual o distinto a consumoProduccion)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PedidoForro {
+  id Int @id @default(autoincrement())
+
+  pedido   Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  pedidoId Int
+
+  proveedor String?
+  serie     String?
+  color     String?
+
+  consumoProduccion Float?
+  composicion       String?
+  metrosPedidos     Float?
+  fechaPedido       DateTime?
+
+  // 🔹 ALMACÉN
+  metrosRecibidos      Float?
+  fechaMetrosRecibidos DateTime?
+  consumoCorte         Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PedidoAccesorio {
+  id Int @id @default(autoincrement())
+
+  pedido   Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  pedidoId Int
+
+  nombre      String?
+  proveedor   String?
+  referencia  String?
+  color       String?
+  medida      String?
+  unidad      String? // UNIDADES / METROS
+  consumoEsc  Float? // opcional: consumo “teórico” del escandallo
+  cantidadPed Float? // unidades / metros pedidos
+  fechaPedido DateTime?
+
+  // 🔹 ALMACÉN
+  unidadesRecibidas Float?
+  fechaRecibidas    DateTime?
+  albaranAccesorio  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PedidoColor {
+  id Int @id @default(autoincrement())
+
+  pedido   Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  pedidoId Int
+
+  color String // "NEGRO", "AZUL 560", etc.
+
+  // "LETRAS" | "NUMEROS" | "PERSONALIZADO"
+  tipoTalla String
+
+  // Ejemplo:
+  // { "tallas": ["XXS","XS","S","M","L","XL"],
+  //   "unidades": [3,31,94,98,63,11],
+  //   "total": 300 }
+  distribucion Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PedidoComentario {
+  id Int @id @default(autoincrement())
+
+  pedido   Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  pedidoId Int
+
+  autor String
+  texto String
+  tipo  String? // "ALMACEN", "LABORATORIO", "CLIENTE"... opcional
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AIInteraction {
+  id          Int     @id @default(autoincrement())
+  empresaId   Int
+  userId      String? // si tienes auth; si no, null
+  pathname    String?
+  question    String
+  answer      String
+  toolUsed    String? // queryFichaGlobal / searchEmpresaGlobal / getEmpresaStats / null
+  success     Boolean @default(true)
+  needsReview Boolean @default(false)
+
+  // ✅ Telemetría de acciones (opcionales)
+  actionClicked String? // ej: "Abrir ficha", "Pedido", "Almacén"...
+  actionHref    String? // href al que navegó
+  actionPath    String? // pathname donde estaba cuando hizo click
+
+  createdAt DateTime @default(now())
+
+  @@index([empresaId, createdAt])
+}
+
+model User {
+  id String @id @default(cuid())
+
+  // ✅ Login principal (sin email obligatorio)
+  username String  @unique
+  email    String? @unique
+
+  name     String
+  password String // hash bcrypt
+
+  // ✅ Estado y flujo de alta
+  isActive           Boolean @default(false) // auto-registro queda pending
+  mustChangePassword Boolean @default(false) // si Admin crea con pass temporal
+
+  // relaciones
+  groups   UserGroup[]
+  empresas UserEmpresa[]
+
+  // Control horario
+  timeDays       TimeDay[]
+  timeDaysSigned TimeDay[] @relation("TimeDaySignedBy")
+
+  // Vacaciones
+  timeVacationBalances TimeVacationBalance[]
+  timeVacationRequests TimeVacationRequest[]
+  timeVacationDecisions TimeVacationRequest[] @relation("TimeVacationDecidedBy")
+
+  chatThreads    ChatThreadMember[]
+  chatMessages   ChatMessage[]
+  notifications  Notification[]
+
+  dmThreadsA     ChatThread[] @relation("DmA")
+  dmThreadsB     ChatThread[] @relation("DmB")
+
+
+  // --- RRHH / Datos trabajador para impresión ---
+  nif      String? // DNI/NIF
+  numeroSS String? // Nº afiliación Seguridad Social
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id    String      @id @default(cuid())
+  key   GroupKey    @unique
+  name  String // "Administración", "RRHH", etc.
+  users UserGroup[]
+
+  createdAt DateTime @default(now())
+}
+
+model UserGroup {
+  id      String @id @default(cuid())
+  userId  String
+  groupId String
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+}
+
+model UserEmpresa {
+  id        String @id @default(cuid())
+  userId    String
+  empresaId Int
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, empresaId])
+  @@index([empresaId])
+}
+
+enum TimeDayType {
+  WORK
+  WEEKEND
+  HOLIDAY
+  VACATION
+  ABSENCE
+}
+
+enum TimeSignMethod {
+  PASSWORD
+}
+
+// --- Vacaciones (workflow RRHH) ---
+// - Balance anual por usuario (acumulable): carryover + entitled
+// - Solicitudes: PENDING/APPROVED/REJECTED (+ cancel)
+enum TimeVacationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model TimeHoliday {
+  id        Int      @id @default(autoincrement())
+  empresaId Int? // null = festivo global (si algún día lo queréis)
+  date      DateTime // guardamos fecha (00:00)
+
+  name String? // "San Isidro", "Navidad", etc. opcional
+
+  empresa Empresa? @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([empresaId, date])
+  @@index([date])
+  @@index([empresaId])
+}
+
+model TimeDay {
+  id Int @id @default(autoincrement())
+
+  userId    String
+  empresaId Int
+  date      DateTime // día (00:00)
+
+  // Turnos (dejamos tarde por compatibilidad con tu hoja)
+  morningIn    String? // "08:00"
+  morningOut   String? // "16:00"
+  afternoonIn  String?
+  afternoonOut String?
+
+  // Si es VACATION/ABSENCE, aquí motivo corto
+  note String?
+
+  // Tipo explícito (si es null, lo calculamos por defecto como WORK)
+  // En v1 lo usamos para VACATION/ABSENCE (manual o futuro: integración calendario)
+  type TimeDayType @default(WORK)
+
+  // Si viene de una solicitud aprobada, guardamos referencia para poder anular/editar desde RRHH
+  vacationRequestId Int?
+
+  // Firma diaria (bloqueo)
+  signedAt   DateTime?
+  signedById String?
+  signMethod TimeSignMethod?
+
+  // Lock fuerte: si está firmado, la UI no debería dejar editar (y server action lo bloquea)
+  lockedAt DateTime?
+
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  empresa  Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  signedBy User?   @relation("TimeDaySignedBy", fields: [signedById], references: [id], onDelete: SetNull)
+
+  vacationRequest TimeVacationRequest? @relation(fields: [vacationRequestId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, empresaId, date])
+  @@index([empresaId, date])
+  @@index([userId, date])
+}
+
+// Saldo anual de vacaciones por usuario (acumulable año a año).
+// RRHH configura carryover + días del año en curso; lo disfrutado se calcula.
+model TimeVacationBalance {
+  id        Int  @id @default(autoincrement())
+  empresaId Int
+  userId    String
+  year      Int
+
+  // Días acumulados del año anterior (carryover)
+  carryoverDays Int @default(0)
+  // Días asignados para el año en curso
+  entitledDays  Int @default(0)
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([empresaId, userId, year])
+  @@index([empresaId, year])
+  @@index([userId, year])
+}
+
+// Solicitud de vacaciones del usuario. RRHH aprueba/rechaza.
+// Al aprobar, se “materializa” en TimeDay(type=VACATION) para que afecte a calendario y print.
+model TimeVacationRequest {
+  id        Int  @id @default(autoincrement())
+  empresaId Int
+  userId    String
+
+  from   DateTime // inclusive (00:00)
+  to     DateTime // inclusive (00:00)
+  reason String?
+
+  status TimeVacationStatus @default(PENDING)
+
+  decidedById   String?
+  decidedAt     DateTime?
+  decisionNote  String?
+
+  empresa    Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  decidedBy  User?   @relation("TimeVacationDecidedBy", fields: [decidedById], references: [id], onDelete: SetNull)
+
+  days TimeDay[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([empresaId, userId, status])
+  @@index([empresaId, from, to])
+  @@index([userId, from, to])
+}
+
+model TimeCompanyVacation {
+  id        Int      @id @default(autoincrement())
+  empresaId Int
+  from      DateTime // inclusive
+  to        DateTime // inclusive
+  reason    String?
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([empresaId, from, to])
+}
+
+// -----------------------------
+// Chat interno + Notificaciones
+// -----------------------------
+
+enum ChatThreadType {
+  GLOBAL
+  EMPRESA
+  GROUP
+  DM
+}
+
+
+
+enum ChatMessageType {
+  USER       // mensaje normal
+  SYSTEM     // mensajes automáticos del sistema (vacaciones aprobadas, etc.)
+}
+
+enum NotificationType {
+  // Sistema / acciones
+  SYSTEM
+
+  // Custom (notificaciones manuales)
+  CUSTOM_SYSTEM
+  CUSTOM_RRHH
+  CUSTOM_ADMIN
+
+  // Chat
+  CHAT_MENTION
+  CHAT_BROADCAST
+
+  // RRHH
+  VACATION_REQUESTED
+  VACATION_APPROVED
+  VACATION_REJECTED
+  TIME_REMINDER
+}
+
+
+
+model ChatThread {
+  id        String         @id @default(cuid())
+  type      ChatThreadType
+
+  // Para threads de empresa (EMPRESA / RRHH)
+  empresaId Int?
+  empresa   Empresa?       @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  // Nombre opcional para canales (ej: "Avisos", "RRHH", "General")
+  name      String?
+
+  // Para canales por grupo (ADMIN / RRHH / ALMACEN / ...)
+  groupKey  GroupKey?
+
+
+
+  // Para DM, guardamos los 2 usuarios (para encontrar rápido el hilo)
+  dmAId     String?
+  dmBId     String?
+  dmA       User?          @relation("DmA", fields: [dmAId], references: [id], onDelete: Cascade)
+  dmB       User?          @relation("DmB", fields: [dmBId], references: [id], onDelete: Cascade)
+
+  members   ChatThreadMember[]
+  messages  ChatMessage[]
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([empresaId, type])
+  @@index([type])
+  @@unique([dmAId, dmBId])
+  @@unique([type, groupKey])
+
+}
+
+model ChatThreadMember {
+  id        String     @id @default(cuid())
+  threadId  String
+  userId    String
+
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Para unread: con esto lo resuelves sin tabla de "reads"
+  lastReadAt DateTime?
+
+  createdAt DateTime   @default(now())
+
+  @@unique([threadId, userId])
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String          @id @default(cuid())
+  threadId  String
+  authorId  String?
+
+  type      ChatMessageType @default(USER)
+  body      String
+
+  // Empresa “contexto” (útil para permisos + para notis)
+  empresaId Int?
+
+  // Mentions ya resueltas (JSON) -> { kind: "USER"|"ALL", users: ["id1","id2"] }
+  mentions  Json?
+
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  empresa   Empresa?   @relation(fields: [empresaId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime   @default(now())
+
+  @@index([threadId, createdAt])
+  @@index([empresaId, createdAt])
+  @@index([authorId, createdAt])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  empresaId Int?
+
+  type      NotificationType
+  title     String
+  body      String?
+
+  // deep link: a dónde debe ir al pinchar (por ejemplo: "/jbp/rrhh?tab=vacaciones")
+  href      String?
+
+  // para agrupar eventos repetidos (opcional, pero útil)
+  // ej: "VAC_REQ:empresaId:userId:2026-01-18"
+  dedupeKey String?
+
+  readAt    DateTime?
+  archivedAt DateTime?
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  empresa   Empresa?         @relation(fields: [empresaId], references: [id], onDelete: SetNull)
+
+  @@index([userId, readAt, createdAt])
+  @@index([empresaId, createdAt])
+  @@index([dedupeKey])
+   @@index([archivedAt])
+}

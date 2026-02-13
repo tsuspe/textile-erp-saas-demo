@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="Screenshot placeholder">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <rect x="40" y="40" width="1200" height="640" rx="16" fill="#111827" stroke="#334155"/>
+  <text x="80" y="120" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="36">Placeholder Screenshot</text>
+  <text x="80" y="170" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="24">Replace this file with a real app capture.</text>
+</svg>
