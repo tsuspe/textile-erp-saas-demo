@@ -1,0 +1,66 @@
+{
+  "stock": {
+    "GLO-CAM-1100": { "S": 9, "M": 14, "L": 6, "XL": 2 },
+    "GLO-BLZ-2200": { "36": 5, "38": 7, "40": 10, "42": 6 },
+    "GLO-PAN-3300": { "38": 4, "40": 8, "42": 7, "44": 3 },
+    "GLO-ACC-9000": { "TALLA UNICA": 25 }
+  },
+  "__migracion_ordenes_fusionada__": true,
+  "ordenes": [],
+  "pedidos": [
+    {
+      "modelo": "GLO-CAM-1100",
+      "talla": "M",
+      "cantidad": 12,
+      "pedido": "DEMO-0101",
+      "numero_pedido": "91001",
+      "cliente": "Aurora Retail Demo",
+      "fecha": "2026-02-02"
+    },
+    {
+      "modelo": "GLO-BLZ-2200",
+      "talla": "40",
+      "cantidad": 9,
+      "pedido": "DEMO-0102",
+      "numero_pedido": "91002",
+      "cliente": "Boreal Uniforms Demo",
+      "fecha": "2026-02-03"
+    },
+    {
+      "modelo": "GLO-PAN-3300",
+      "talla": "42",
+      "cantidad": 7,
+      "pedido": "DEMO-0103",
+      "numero_pedido": "91003",
+      "cliente": "Costa Moda Demo",
+      "fecha": "2026-02-04"
+    }
+  ],
+  "info_modelos": {
+    "GLO-CAM-1100": {
+      "descripcion": "Camisa corporativa Orion",
+      "color": "Azul acero",
+      "cliente": "Aurora Retail Demo"
+    },
+    "GLO-BLZ-2200": {
+      "descripcion": "Blazer operativo Atlas",
+      "color": "Gris titanio",
+      "cliente": "Boreal Uniforms Demo"
+    },
+    "GLO-PAN-3300": {
+      "descripcion": "Pantalon tecnico Nova",
+      "color": "Negro",
+      "cliente": "Costa Moda Demo"
+    }
+  },
+  "pedidos_fabricacion": {
+    "GLO-CAM-1100": [
+      { "talla": "S", "cantidad": 15, "fecha": "2026-02-10" },
+      { "talla": "M", "cantidad": 20, "fecha": "2026-02-10" }
+    ],
+    "GLO-BLZ-2200": [
+      { "talla": "38", "cantidad": 10, "fecha": "2026-02-12" },
+      { "talla": "40", "cantidad": 14, "fecha": "2026-02-12" }
+    ]
+  }
+}

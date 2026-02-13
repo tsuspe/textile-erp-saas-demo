@@ -89,11 +89,38 @@ async function readJsonSafe(filePath: string, fallback: any) {
   }
 }
 
+async function fileExists(filePath: string) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function resolveDemoJsonPath(filename: string) {
+  const candidates = [
+    path.join(process.cwd(), "public", "demo", filename),
+    path.join(process.cwd(), "data", "demo", filename),
+    path.join(process.cwd(), "..", "data", "demo", filename),
+  ];
+
+  for (const candidate of candidates) {
+    if (await fileExists(candidate)) return candidate;
+  }
+
+  // Fallback predecible para logs/diagnóstico aunque no exista.
+  return candidates[0];
+}
+
 async function buildDemoMock(op: string, payload: Record<string, any>) {
-  const invPath = payload.inv || process.env.GLOBALIA_INV_PATH || "../data/demo/datos_almacen.json";
-  const prevPath = payload.prev || process.env.GLOBALIA_PREV_PATH || "../data/demo/prevision.json";
-  const clientesPath = payload.clientes || process.env.GLOBALIA_CLIENTES_PATH || "../data/demo/clientes.json";
-  const talleresPath = payload.talleres || process.env.GLOBALIA_TALLERES_PATH || "../data/demo/talleres.json";
+  const invPath =
+    payload.inv || process.env.GLOBALIA_INV_PATH || (await resolveDemoJsonPath("datos_almacen.json"));
+  const prevPath = payload.prev || process.env.GLOBALIA_PREV_PATH || (await resolveDemoJsonPath("prevision.json"));
+  const clientesPath =
+    payload.clientes || process.env.GLOBALIA_CLIENTES_PATH || (await resolveDemoJsonPath("clientes.json"));
+  const talleresPath =
+    payload.talleres || process.env.GLOBALIA_TALLERES_PATH || (await resolveDemoJsonPath("talleres.json"));
 
   const inv = await readJsonSafe(String(invPath), {});
   const prev = await readJsonSafe(String(prevPath), {});
@@ -158,7 +185,12 @@ async function buildDemoMock(op: string, payload: Record<string, any>) {
         talleres: String(talleresPath),
         clientes: String(clientesPath),
       },
-      exists: { inv: true, prev: true, talleres: true, clientes: true },
+      exists: {
+        inv: await fileExists(String(invPath)),
+        prev: await fileExists(String(prevPath)),
+        talleres: await fileExists(String(talleresPath)),
+        clientes: await fileExists(String(clientesPath)),
+      },
       num_modelos: numModelos,
     };
   }

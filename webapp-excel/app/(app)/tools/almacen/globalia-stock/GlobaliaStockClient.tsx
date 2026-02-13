@@ -765,13 +765,25 @@ type PathsState = {
 };
 
 function getDefaultPaths(): PathsState {
+  const isPublicDemoMode = (process.env.NEXT_PUBLIC_DEMO_MODE ?? "").trim().toLowerCase() === "true";
+  const demoDefaults = isPublicDemoMode
+    ? {
+        inv: "./public/demo/datos_almacen.json",
+        prev: "./public/demo/prevision.json",
+        talleres: "./public/demo/talleres.json",
+        clientes: "./public/demo/clientes.json",
+        exportDir: "",
+        backupDir: "",
+      }
+    : null;
+
   const fromPublic = {
-    inv: (process.env.NEXT_PUBLIC_GLOBALIA_INV_PATH as string) || "",
-    prev: (process.env.NEXT_PUBLIC_GLOBALIA_PREV_PATH as string) || "",
-    talleres: (process.env.NEXT_PUBLIC_GLOBALIA_TALLERES_PATH as string) || "",
-    clientes: (process.env.NEXT_PUBLIC_GLOBALIA_CLIENTES_PATH as string) || "",
-    exportDir: (process.env.NEXT_PUBLIC_GLOBALIA_EXPORT_DIR as string) || "",
-    backupDir: (process.env.NEXT_PUBLIC_GLOBALIA_BACKUP_DIR as string) || "",
+    inv: (process.env.NEXT_PUBLIC_GLOBALIA_INV_PATH as string) || demoDefaults?.inv || "",
+    prev: (process.env.NEXT_PUBLIC_GLOBALIA_PREV_PATH as string) || demoDefaults?.prev || "",
+    talleres: (process.env.NEXT_PUBLIC_GLOBALIA_TALLERES_PATH as string) || demoDefaults?.talleres || "",
+    clientes: (process.env.NEXT_PUBLIC_GLOBALIA_CLIENTES_PATH as string) || demoDefaults?.clientes || "",
+    exportDir: (process.env.NEXT_PUBLIC_GLOBALIA_EXPORT_DIR as string) || demoDefaults?.exportDir || "",
+    backupDir: (process.env.NEXT_PUBLIC_GLOBALIA_BACKUP_DIR as string) || demoDefaults?.backupDir || "",
   };
 
   return {
