@@ -198,24 +198,26 @@ export default async function RRHHControlHorarioPage({
       <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
         <div className="text-sm text-white/60">Trabajador</div>
 
-        <form method="GET" action={`/${empresaSlug}/rrhh/control-horario`} className="flex flex-wrap items-end gap-2">
-          <input type="hidden" name="year" value={String(year)} />
-          <input type="hidden" name="month" value={String(month)} />
-          <select
-            name="userId"
-            defaultValue={selectedUserId}
-            className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm outline-none"
-          >
-            <option value="">— Selecciona trabajador —</option>
-            {userList.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name} (@{u.username})
-              </option>
-            ))}
-          </select>
-          <button className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">
-            Ver
-          </button>
+        <div className="flex flex-wrap items-end gap-2">
+          <form method="GET" action={`/${empresaSlug}/rrhh/control-horario`} className="flex flex-wrap items-end gap-2">
+            <input type="hidden" name="year" value={String(year)} />
+            <input type="hidden" name="month" value={String(month)} />
+            <select
+              name="userId"
+              defaultValue={selectedUserId}
+              className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm outline-none"
+            >
+              <option value="">— Selecciona trabajador —</option>
+              {userList.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} (@{u.username})
+                </option>
+              ))}
+            </select>
+            <button className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">
+              Ver
+            </button>
+          </form>
 
           {activeUser ? (
             <div className="ml-auto flex flex-wrap items-center gap-2">
@@ -241,7 +243,7 @@ export default async function RRHHControlHorarioPage({
               </form>
             </div>
           ) : null}
-        </form>
+        </div>
       </div>
 
       <div className="rounded-xl border border-white/10 bg-white/5 p-4">
