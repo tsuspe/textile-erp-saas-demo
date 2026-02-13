@@ -764,6 +764,22 @@ type PathsState = {
   backupDir: string;
 };
 
+function normalizePathValue(v: unknown) {
+  if (typeof v !== "string") return "";
+  return v.trim();
+}
+
+function mergePathsPreferNonEmpty(base: PathsState, overrideRaw: unknown): PathsState {
+  if (!overrideRaw || typeof overrideRaw !== "object") return base;
+  const override = overrideRaw as Partial<Record<keyof PathsState, unknown>>;
+  const out: PathsState = { ...base };
+  for (const key of Object.keys(base) as Array<keyof PathsState>) {
+    const v = normalizePathValue(override[key]);
+    if (v) out[key] = v;
+  }
+  return out;
+}
+
 function getDefaultPaths(): PathsState {
   const isPublicDemoMode = (process.env.NEXT_PUBLIC_DEMO_MODE ?? "").trim().toLowerCase() === "true";
   const demoDefaults = isPublicDemoMode
@@ -778,12 +794,12 @@ function getDefaultPaths(): PathsState {
     : null;
 
   const fromPublic = {
-    inv: (process.env.NEXT_PUBLIC_GLOBALIA_INV_PATH as string) || demoDefaults?.inv || "",
-    prev: (process.env.NEXT_PUBLIC_GLOBALIA_PREV_PATH as string) || demoDefaults?.prev || "",
-    talleres: (process.env.NEXT_PUBLIC_GLOBALIA_TALLERES_PATH as string) || demoDefaults?.talleres || "",
-    clientes: (process.env.NEXT_PUBLIC_GLOBALIA_CLIENTES_PATH as string) || demoDefaults?.clientes || "",
-    exportDir: (process.env.NEXT_PUBLIC_GLOBALIA_EXPORT_DIR as string) || demoDefaults?.exportDir || "",
-    backupDir: (process.env.NEXT_PUBLIC_GLOBALIA_BACKUP_DIR as string) || demoDefaults?.backupDir || "",
+    inv: normalizePathValue(process.env.NEXT_PUBLIC_GLOBALIA_INV_PATH) || demoDefaults?.inv || "",
+    prev: normalizePathValue(process.env.NEXT_PUBLIC_GLOBALIA_PREV_PATH) || demoDefaults?.prev || "",
+    talleres: normalizePathValue(process.env.NEXT_PUBLIC_GLOBALIA_TALLERES_PATH) || demoDefaults?.talleres || "",
+    clientes: normalizePathValue(process.env.NEXT_PUBLIC_GLOBALIA_CLIENTES_PATH) || demoDefaults?.clientes || "",
+    exportDir: normalizePathValue(process.env.NEXT_PUBLIC_GLOBALIA_EXPORT_DIR) || demoDefaults?.exportDir || "",
+    backupDir: normalizePathValue(process.env.NEXT_PUBLIC_GLOBALIA_BACKUP_DIR) || demoDefaults?.backupDir || "",
   };
 
   return {
@@ -822,6 +838,7 @@ const TABS: Array<{ key: TabKey; label: string; sub?: string }> = [
 ];
 
 export default function GlobaliaStockClient() {
+  const isPublicDemoMode = (process.env.NEXT_PUBLIC_DEMO_MODE ?? "").trim().toLowerCase() === "true";
   const [activeTab, setActiveTab] = useState<TabKey>("stock");
 
   const [busy, setBusy] = useState<null | string>(null);
@@ -830,16 +847,19 @@ export default function GlobaliaStockClient() {
   const [err, setErr] = useState<string | null>(null);
 
   const [paths, setPaths] = useState<PathsState>(() => {
+    const defaults = getDefaultPaths();
+    if (isPublicDemoMode) return defaults;
+
     // 1) intenta localStorage (si existe)
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) {
         const j = JSON.parse(raw);
-        if (j && typeof j === "object") return { ...getDefaultPaths(), ...j };
+        return mergePathsPreferNonEmpty(defaults, j);
       }
     } catch {}
     // 2) fallback a defaults del .env
-    return getDefaultPaths();
+    return defaults;
   });
 
 
@@ -1056,13 +1076,14 @@ export default function GlobaliaStockClient() {
 
 
   useEffect(() => {
+    if (isPublicDemoMode) return;
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (!raw) return;
       const j = JSON.parse(raw);
-      if (j && typeof j === "object") setPaths((p) => ({ ...p, ...j }));
+      setPaths((p) => mergePathsPreferNonEmpty(p, j));
     } catch {}
-  }, []);
+  }, [isPublicDemoMode]);
 
   useEffect(() => {
     try {
