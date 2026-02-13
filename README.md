@@ -23,18 +23,19 @@ Demo publicable de una plataforma interna de gestion textil (multi-empresa) con 
 
 ## Screenshots
 
-![Dashboard](webapp-excel/webapp-excel/docs/images/01-dashboard.png)
-![Clientes](webapp-excel/webapp-excel/docs/images/02-maestros.png)
-![Stock](webapp-excel/webapp-excel/docs/images/03-clientes.png)
-![Escandallos](webapp-excel/webapp-excel/docs/images/04-fichas.png)
-![RRHH](webapp-excel/webapp-excel/docs/images/05-rrhh-control-horario.png)
-![Chat + IA](webapp-excel/webapp-excel/docs/images/06-demo-tour.png)
+![Dashboard](webapp-excel/docs/images/01-dashboard.png)
+![Clientes](webapp-excel/docs/images/02-maestros.png)
+![Stock](webapp-excel/docs/images/03-clientes.png)
+![Escandallos](webapp-excel/docs/images/04-fichas.png)
+![RRHH](webapp-excel/docs/images/05-rrhh-control-horario.png)
+![Chat + IA](webapp-excel/docs/images/06-demo-tour.png)
 
 > Las imágenes actuales son placeholders. Se pueden reemplazar por capturas reales ejecutando la app en local con las credenciales demo.
 
 ## Credenciales demo
 
 Password comun por defecto: `demo1234`
+Estas credenciales son publicas y solo validas para la demo local (sin acceso a sistemas reales).
 
 - `demo_admin` (`admin.demo@example.com`)
 - `demo_rrhh` (`rrhh.demo@example.com`)

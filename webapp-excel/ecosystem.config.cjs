@@ -1,5 +1,6 @@
 // ecosystem.config.cjs
 // Example PM2 config for DEMO environments.
+// Public repo note: values are placeholders and must be replaced per local environment.
 
 module.exports = {
   apps: [
@@ -37,12 +38,12 @@ module.exports = {
         EDIWIN_OUT_EUROFIEL_DIR: "./data/ediwin/out/eurofiel",
         EDIWIN_OUT_ECI_DIR: "./data/ediwin/out/eci",
 
-        GLOBALIA_INV_PATH: "./data/globalia/datos_almacen.json",
-        GLOBALIA_PREV_PATH: "./data/globalia/prevision.json",
-        GLOBALIA_TALLERES_PATH: "./data/globalia/talleres.json",
-        GLOBALIA_CLIENTES_PATH: "./data/globalia/clientes.json",
-        GLOBALIA_EXPORT_DIR: "./data/globalia/EXPORT_DIR",
-        GLOBALIA_BACKUP_DIR: "./data/globalia/backups",
+        GLOBALIA_INV_PATH: "./data/demo/datos_almacen.json",
+        GLOBALIA_PREV_PATH: "./data/demo/prevision.json",
+        GLOBALIA_TALLERES_PATH: "./data/demo/talleres.json",
+        GLOBALIA_CLIENTES_PATH: "./data/demo/clientes.json",
+        GLOBALIA_EXPORT_DIR: "./data/demo/EXPORT_DIR",
+        GLOBALIA_BACKUP_DIR: "./data/demo/backups",
 
         BACKUP_ROOT_DIR: "./data/backups",
         PG_DUMP_BIN: "pg_dump",

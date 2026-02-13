@@ -20,9 +20,9 @@
 **/uploads/*
 !**/uploads/.gitkeep
 **/data/backups/
-**/data/globalia/backups/*
-!**/data/globalia/backups/.gitkeep
-!**/data/globalia/backups/README.md
+**/data/demo/backups/*
+!**/data/demo/backups/.gitkeep
+!**/data/demo/backups/README.md
 
 # Python cache
 **/__pycache__/

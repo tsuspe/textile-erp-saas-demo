@@ -1328,7 +1328,7 @@ class GestorStock:
 
         # Directorios de exportación / backup (inyectables desde CLI / Next)
         self.EXPORT_DIR = (
-            export_dir if export_dir else r"./data/globalia/EXPORT_DIR"
+            export_dir if export_dir else r"./data/demo/EXPORT_DIR"
         )
 
         self.BACKUP_DIR = (

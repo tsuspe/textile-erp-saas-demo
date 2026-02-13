@@ -29,7 +29,7 @@ function getDataRoot() {
   return path.resolve(process.cwd(), "..", "data");
 }
 
-function getDataDir(name: "globalia" | "uploads") {
+function getDataDir(name: "demo" | "uploads") {
   return path.join(getDataRoot(), name);
 }
 
@@ -114,7 +114,7 @@ export async function POST(req: Request) {
   const backupDir = safeJoin(backupRoot, backupId);
   const dbDir = path.join(backupDir, "db");
   const fsDir = path.join(backupDir, "fs");
-  const fsGlobaliaDir = path.join(fsDir, "globalia");
+  const fsGlobaliaDir = path.join(fsDir, "demo");
   const fsUploadsDir = path.join(fsDir, "uploads");
   const fsEnvDir = path.join(fsDir, "env");
 
@@ -168,7 +168,7 @@ export async function POST(req: Request) {
   const copyOps: Array<Promise<void>> = [];
   const missingDirs: string[] = [];
 
-  const globaliaSrc = getDataDir("globalia");
+  const globaliaSrc = getDataDir("demo");
   const uploadsSrc = getDataDir("uploads");
 
   try {
@@ -177,10 +177,10 @@ export async function POST(req: Request) {
       await ensureDir(fsGlobaliaDir);
       copyOps.push(copyDirRecursive(globaliaSrc, fsGlobaliaDir));
     } else {
-      missingDirs.push("data/globalia");
+      missingDirs.push("data/demo");
     }
   } catch {
-    missingDirs.push("data/globalia");
+    missingDirs.push("data/demo");
   }
 
   try {
@@ -197,7 +197,7 @@ export async function POST(req: Request) {
 
   await Promise.all(copyOps);
 
-  logs.fs.globalia = missingDirs.includes("data/globalia") ? "MISSING" : "OK";
+  logs.fs.globalia = missingDirs.includes("data/demo") ? "MISSING" : "OK";
   logs.fs.uploads = missingDirs.includes("data/uploads") ? "MISSING" : "OK";
 
   let envBackupPath: string | null = null;

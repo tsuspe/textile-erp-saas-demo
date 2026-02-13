@@ -21,6 +21,7 @@ Ajustes minimos:
 ## 2) Base de datos
 Con Docker (desde raiz):
 ```bash
+export POSTGRES_PASSWORD=demo_local_password
 docker compose up -d db
 ```
 

@@ -90,10 +90,10 @@ async function readJsonSafe(filePath: string, fallback: any) {
 }
 
 async function buildDemoMock(op: string, payload: Record<string, any>) {
-  const invPath = payload.inv || process.env.GLOBALIA_INV_PATH || "../data/globalia/datos_almacen.json";
-  const prevPath = payload.prev || process.env.GLOBALIA_PREV_PATH || "../data/globalia/prevision.json";
-  const clientesPath = payload.clientes || process.env.GLOBALIA_CLIENTES_PATH || "../data/globalia/clientes.json";
-  const talleresPath = payload.talleres || process.env.GLOBALIA_TALLERES_PATH || "../data/globalia/talleres.json";
+  const invPath = payload.inv || process.env.GLOBALIA_INV_PATH || "../data/demo/datos_almacen.json";
+  const prevPath = payload.prev || process.env.GLOBALIA_PREV_PATH || "../data/demo/prevision.json";
+  const clientesPath = payload.clientes || process.env.GLOBALIA_CLIENTES_PATH || "../data/demo/clientes.json";
+  const talleresPath = payload.talleres || process.env.GLOBALIA_TALLERES_PATH || "../data/demo/talleres.json";
 
   const inv = await readJsonSafe(String(invPath), {});
   const prev = await readJsonSafe(String(prevPath), {});

@@ -6,6 +6,7 @@ Usa un usuario demo:
 - `demo_rrhh`
 - `demo_almacen`
 Password: `demo1234`
+Nota: credenciales publicas de demostracion, no conectadas a ningun entorno productivo.
 
 ## Modulos
 

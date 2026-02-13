@@ -9,7 +9,7 @@
 - Realtime: `realtime` (Node.js + Socket.IO + JWT).
 - DB layer: Prisma + PostgreSQL (`webapp-excel/prisma/schema.prisma`).
 - Integrations: EDIWIN parser (Python), Globalia Stock toolkit (Python), local backup utilities.
-- Data folders: `data/globalia`, `data/uploads`, `webapp-excel/public/uploads`, `webapp-excel/demo-assets`.
+- Data folders: `data/demo`, `data/uploads`, `webapp-excel/public/uploads`, `webapp-excel/demo-assets`.
 
 ## Sensitive Findings and Mitigations
 | ID | Finding | Location | Risk | Mitigation | Status |
@@ -17,7 +17,7 @@
 | S-01 | Hardcoded realtime JWT/internal tokens | `realtime/.env` | Secret exposure | Removed file, added `realtime/.env.example` placeholders | DONE |
 | S-02 | Hardcoded auth/database/realtime secrets | `webapp-excel/ecosystem.config.cjs` | Secret exposure | Replaced with demo placeholders and local-safe defaults | DONE |
 | S-03 | Real personal/company identifiers in seed | `webapp-excel/prisma/seed.ts` | PII/business disclosure | Rewrote seed with synthetic users/companies/records | DONE |
-| S-04 | Real client/taller datasets and backups | `data/globalia/*` and backups | PII/business disclosure | Replaced by synthetic JSON/CSV demo datasets | DONE |
+| S-04 | Real client/taller datasets and backups | `data/demo/*` and backups | PII/business disclosure | Replaced by synthetic JSON/CSV demo datasets | DONE |
 | S-05 | Real uploaded assets/images | `data/uploads/*`, `webapp-excel/public/uploads/*` | Possible PII leakage | Removed files; kept `.gitkeep` only | DONE |
 | S-06 | Internal paths/hosts in scripts/configs | multiple files | Infra disclosure | Replaced with local demo paths and placeholders | DONE |
 | S-07 | Vendored runtime deps committed | `realtime/node_modules` | Supply-chain/repo hygiene risk | Removed and ignored in `.gitignore` | DONE |
@@ -34,7 +34,7 @@
 
 ## Files Removed or Replaced
 - Removed: `realtime/.env`, `realtime/node_modules/`, `webapp-excel/ediwin_parser_review.zip`, `webapp-excel/prisma/dev.db`, real uploads, real backup dumps.
-- Replaced: `data/globalia/*.json`, `data/globalia/EXPORT_DIR/*.csv`, `webapp-excel/prisma/_export/maestros.json`, `webapp-excel/ecosystem.config.cjs`.
+- Replaced: `data/demo/*.json`, `data/demo/EXPORT_DIR/*.csv`, `webapp-excel/prisma/_export/maestros.json`, `webapp-excel/ecosystem.config.cjs`.
 
 ## Git Hygiene Notes
 - This workspace copy has no `.git` metadata; commits/history rewrite cannot be executed here.
@@ -51,4 +51,3 @@
 - [x] Integrations support mock mode via `DEMO_MODE`.
 - [x] `.env.example` files present with placeholders.
 - [x] `.gitignore` updated to prevent future leakage.
-

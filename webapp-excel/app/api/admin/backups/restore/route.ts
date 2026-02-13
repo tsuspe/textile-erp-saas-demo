@@ -26,7 +26,7 @@ function getDataRoot() {
   return path.resolve(process.cwd(), "..", "data");
 }
 
-function getDataDir(name: "globalia" | "uploads") {
+function getDataDir(name: "demo" | "uploads") {
   return path.join(getDataRoot(), name);
 }
 
@@ -159,13 +159,13 @@ export async function POST(req: Request) {
     }
 
     const suffix = nowStamp();
-    const globaliaCurrent = getDataDir("globalia");
+    const globaliaCurrent = getDataDir("demo");
     const uploadsCurrent = getDataDir("uploads");
 
     logs.renames.globalia = await renameIfExists(globaliaCurrent, suffix);
     logs.renames.uploads = await renameIfExists(uploadsCurrent, suffix);
 
-    const globaliaBackup = path.join(backupDir, "fs", "globalia");
+    const globaliaBackup = path.join(backupDir, "fs", "demo");
     const uploadsBackup = path.join(backupDir, "fs", "uploads");
 
     try {

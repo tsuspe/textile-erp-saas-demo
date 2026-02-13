@@ -4,7 +4,7 @@ services:
     container_name: fichas_db
     environment:
       POSTGRES_USER: fichas
-      POSTGRES_PASSWORD: fichas_pass
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME_LOCAL_DEMO_DB_PASSWORD}
       POSTGRES_DB: fichas
     ports:
       - "5432:5432"
