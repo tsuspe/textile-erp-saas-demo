@@ -21,6 +21,53 @@ Demo publicable de una plataforma interna de gestion textil (multi-empresa) con 
 - Asistente IA con herramientas deterministas y fallback demo.
 - Integraciones EDIWIN/Globalia con soporte mock en `DEMO_MODE`.
 
+## 🌐 Live Demo
+
+La aplicación está desplegada y disponible públicamente en:
+
+👉 https://textile-erp-saas-demo.vercel.app
+
+## Credenciales de acceso (modo demo)
+
+Password comun por defecto: `demo1234`
+Estas credenciales son publicas y solo validas para entorno demo.
+
+- `demo_admin` (`admin.demo@example.com`) - acceso completo
+- `demo_rrhh` (`rrhh.demo@example.com`) - modulo RRHH
+- `demo_almacen` (`almacen.demo@example.com`) - modulo almacen
+
+⚠️ Este entorno utiliza datos sinteticos y está pensado exclusivamente para demostración técnica.
+
+## 🔧 Limitaciones del entorno demo
+
+Este despliegue está optimizado para evaluación técnica y revisión de arquitectura.
+Algunas funcionalidades están parcialmente desacopladas respecto al entorno productivo real:
+
+- Realtime server (Socket.IO) no está desplegado en esta versión pública.
+- El chat y las notificaciones funcionan en modo no-realtime.
+- No hay sincronización en vivo entre sesiones simultáneas.
+- Integraciones externas (EDIWIN / Globalia) funcionan en `DEMO_MODE`, usando datasets simulados.
+- Servicios locales (Ollama, herramientas Python) no están activos en producción.
+
+El objetivo del despliegue es permitir:
+
+- Navegación completa multi-tenant.
+- Gestión de maestros.
+- Flujo escandallo -> pedido -> stock.
+- Módulo RRHH (control horario y vacaciones).
+- Sistema de roles y permisos.
+- Arquitectura desacoplada lista para escalar.
+
+## 🧠 Arquitectura del demo
+
+- Frontend + API: Next.js (App Router)
+- Base de datos: Supabase PostgreSQL (migraciones Prisma aplicadas)
+- Autenticación: NextAuth (credentials)
+- Modo demo controlado por `DEMO_MODE=true`
+- Realtime desacoplado (no desplegado en Vercel)
+
+Esta demo reproduce la arquitectura real de la plataforma interna, eliminando únicamente servicios sensibles o dependientes de infraestructura privada.
+
 ## Screenshots
 
 ![Dashboard](webapp-excel/docs/images/v2-01-dashboard.png)
@@ -41,15 +88,6 @@ Demo publicable de una plataforma interna de gestion textil (multi-empresa) con 
 
 > Para regenerarlas: `cd webapp-excel && DEMO_TOUR_EMPRESA=northwind-demo npm run screenshots`
 
-## Credenciales demo
-
-Password comun por defecto: `demo1234`
-Estas credenciales son publicas y solo validas para la demo local (sin acceso a sistemas reales).
-
-- `demo_admin` (`admin.demo@example.com`)
-- `demo_rrhh` (`rrhh.demo@example.com`)
-- `demo_almacen` (`almacen.demo@example.com`)
-
 ## Tour recomendado
 
 1. Home -> empresa `acme-demo`.
@@ -62,9 +100,9 @@ Estas credenciales son publicas y solo validas para la demo local (sin acceso a 
 ## Stack
 
 - Next.js (App Router), React, TypeScript
-- Prisma ORM + PostgreSQL
+- Prisma ORM + Supabase PostgreSQL
 - NextAuth (credentials)
-- Socket.IO realtime (servicio `realtime`)
+- Socket.IO realtime (servicio `realtime`, desacoplado en demo pública)
 - Python tools para integraciones (modo real o mock)
 
 ## Lo que demuestra este proyecto
