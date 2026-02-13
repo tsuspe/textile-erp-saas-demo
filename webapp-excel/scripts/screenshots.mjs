@@ -1,5 +1,7 @@
 import { chromium } from "@playwright/test";
+import { spawn } from "node:child_process";
 import fs from "node:fs";
+import net from "node:net";
 import path from "node:path";
 
 const BASE_URL = process.env.SCREENSHOT_BASE_URL || "http://localhost:3000";
@@ -9,6 +11,7 @@ const DEFAULT_EMPRESA = process.env.DEMO_TOUR_EMPRESA || "northwind-demo";
 const DEMO_USER = process.env.DEMO_USER || "demo_admin";
 const DEMO_PASS = process.env.DEMO_PASS || "demo1234";
 const MAX_SOFT_FAILURES = 2;
+const REALTIME_PORT = Number(process.env.SCREENSHOT_REALTIME_PORT || "3001");
 
 function out(name) {
   return path.join(OUT_DIR, name);
@@ -176,6 +179,69 @@ async function login(page) {
   await waitStable(page);
 }
 
+function isPortOpen(port, host = "127.0.0.1", timeoutMs = 700) {
+  return new Promise((resolve) => {
+    const sock = new net.Socket();
+    let done = false;
+    const finish = (ok) => {
+      if (done) return;
+      done = true;
+      sock.destroy();
+      resolve(ok);
+    };
+    sock.setTimeout(timeoutMs);
+    sock.once("connect", () => finish(true));
+    sock.once("timeout", () => finish(false));
+    sock.once("error", () => finish(false));
+    sock.connect(port, host);
+  });
+}
+
+async function waitForPort(port, host = "127.0.0.1", timeoutMs = 12_000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if (await isPortOpen(port, host)) return true;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  return false;
+}
+
+async function ensureRealtimeServer() {
+  const auto = (process.env.SCREENSHOT_AUTO_REALTIME ?? "true").toLowerCase() !== "false";
+  if (!auto) return null;
+  if (await isPortOpen(REALTIME_PORT)) return null;
+
+  const realtimeDir = path.resolve(process.cwd(), "..", "realtime");
+  const baseOrigin = new URL(BASE_URL).origin;
+  const realtimeJwt = process.env.REALTIME_JWT_SECRET || "CHANGE_ME_REALTIME_JWT_SECRET";
+  const realtimeInternal = process.env.REALTIME_INTERNAL_TOKEN || "CHANGE_ME_REALTIME_INTERNAL_TOKEN";
+  const child = spawn("node", ["server.js"], {
+    cwd: realtimeDir,
+    env: {
+      ...process.env,
+      REALTIME_PORT: String(REALTIME_PORT),
+      REALTIME_HOST: process.env.REALTIME_HOST || "0.0.0.0",
+      REALTIME_JWT_SECRET: realtimeJwt,
+      REALTIME_INTERNAL_TOKEN: realtimeInternal,
+      REALTIME_CORS_ORIGIN: process.env.REALTIME_CORS_ORIGIN || baseOrigin,
+    },
+    stdio: "ignore",
+    detached: true,
+  });
+  child.unref();
+
+  const ok = await waitForPort(REALTIME_PORT);
+  if (!ok) {
+    try {
+      process.kill(child.pid, "SIGTERM");
+    } catch {}
+    throw new Error(`No pude levantar realtime en :${REALTIME_PORT}`);
+  }
+
+  console.log(`[screenshots] realtime auto-started on :${REALTIME_PORT}`);
+  return child.pid;
+}
+
 async function openFirstEscandalloDetail(page, empresa) {
   await goto(page, `/${empresa}/fichas?soloConEscandallo=1`, { tenant: empresa });
   await waitAnyVisible(page, ['h1:has-text("Fichas técnicas")', "main"]);
@@ -262,13 +328,16 @@ async function capture(page, failures, fileName, action) {
 
 async function main() {
   if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+  const autoRealtimePid = await ensureRealtimeServer();
+  let browser = null;
 
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
-    deviceScaleFactor: 2,
-  });
-  const page = await context.newPage();
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      deviceScaleFactor: 2,
+    });
+    const page = await context.newPage();
 
   console.log(`[screenshots] BASE_URL=${BASE_URL}`);
   console.log(`[screenshots] empresa=${DEFAULT_EMPRESA}`);
@@ -381,18 +450,30 @@ async function main() {
     await waitStable(page);
   });
 
-  await browser.close();
+    await browser.close();
 
-  if (failures.length) {
-    console.warn("\n[screenshots] warning summary:");
-    for (const f of failures) console.warn(`- ${f.fileName}: ${f.message}`);
+    if (failures.length) {
+      console.warn("\n[screenshots] warning summary:");
+      for (const f of failures) console.warn(`- ${f.fileName}: ${f.message}`);
+    }
+
+    console.log(`\nListo. PNGs en ${OUT_DIR}`);
+    console.log(`[screenshots] done=${15 - failures.length} failed=${failures.length}`);
+
+    if (failures.length > MAX_SOFT_FAILURES) process.exit(1);
+    process.exit(0);
+  } finally {
+    if (browser) {
+      try {
+        await browser.close();
+      } catch {}
+    }
+    if (autoRealtimePid) {
+      try {
+        process.kill(autoRealtimePid, "SIGTERM");
+      } catch {}
+    }
   }
-
-  console.log(`\nListo. PNGs en ${OUT_DIR}`);
-  console.log(`[screenshots] done=${15 - failures.length} failed=${failures.length}`);
-
-  if (failures.length > MAX_SOFT_FAILURES) process.exit(1);
-  process.exit(0);
 }
 
 main().catch((err) => {

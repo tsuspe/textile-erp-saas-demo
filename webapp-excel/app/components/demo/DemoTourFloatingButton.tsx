@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const LAST_EMPRESA_KEY = "last_empresa_slug";
 const RESERVED_SEGMENTS = new Set([
@@ -31,30 +31,35 @@ export default function DemoTourFloatingButton({
 }) {
   const pathname = usePathname();
 
-  const href = useMemo(() => {
+  const computedHref = useMemo(() => {
     const fromProp = (empresaSlug ?? "").trim();
     if (fromProp) {
-      try {
-        localStorage.setItem(LAST_EMPRESA_KEY, fromProp);
-      } catch {}
       return `/${fromProp}/demo-tour`;
     }
 
     const fromPath = extractEmpresaFromPath(pathname ?? "");
     if (fromPath) {
-      try {
-        localStorage.setItem(LAST_EMPRESA_KEY, fromPath);
-      } catch {}
       return `/${fromPath}/demo-tour`;
+    }
+    return "/";
+  }, [empresaSlug, pathname]);
+  const [href, setHref] = useState(computedHref);
+
+  useEffect(() => {
+    setHref(computedHref);
+    if (computedHref !== "/") {
+      try {
+        const slug = computedHref.split("/").filter(Boolean)[0] ?? "";
+        if (slug) localStorage.setItem(LAST_EMPRESA_KEY, slug);
+      } catch {}
+      return;
     }
 
     try {
       const fromStorage = (localStorage.getItem(LAST_EMPRESA_KEY) ?? "").trim();
-      if (fromStorage) return `/${fromStorage}/demo-tour`;
+      if (fromStorage) setHref(`/${fromStorage}/demo-tour`);
     } catch {}
-
-    return "/";
-  }, [empresaSlug, pathname]);
+  }, [computedHref]);
 
   const rightPx = 24 + rightShiftPx;
 
