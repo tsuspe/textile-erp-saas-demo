@@ -31,7 +31,7 @@ Demo publicable de una plataforma interna de gestion textil (multi-empresa) con 
 ![Demo Tour](webapp-excel/docs/images/06-demo-tour.png)
 ![Escandallo Detalle](webapp-excel/docs/images/07-escandallo-detalle.png)
 ![Almacen Stock](webapp-excel/docs/images/08-almacen-stock.png)
-![RRHH Control Horario v2](webapp-excel/docs/images/09-rrhh-control-horario.png)
+![RRHH Panel](webapp-excel/docs/images/09-rrhh-panel.png)
 ![RRHH Vacaciones](webapp-excel/docs/images/10-rrhh-vacaciones.png)
 ![Chat](webapp-excel/docs/images/11-chat.png)
 ![Notificaciones](webapp-excel/docs/images/12-notificaciones.png)

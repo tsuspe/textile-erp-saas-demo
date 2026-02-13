@@ -330,12 +330,9 @@ async function main() {
     await waitAnyVisible(page, ['h1:has-text("Ficha almacén")', 'h1:has-text("Ficha almac")', "main"]);
   });
 
-  await capture(page, failures, "09-rrhh-control-horario.png", async () => {
+  await capture(page, failures, "09-rrhh-panel.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}/rrhh`, { tenant: DEFAULT_EMPRESA });
-    const clicked = await safeClick(page, ['a:has-text("Control horario")']);
-    if (!clicked) await goto(page, `/${DEFAULT_EMPRESA}/rrhh/control-horario`, { tenant: DEFAULT_EMPRESA });
-    await selectFirstWorkerIfAvailable(page);
-    await waitAnyVisible(page, ['h1:has-text("Control horario")', "main"]);
+    await waitAnyVisible(page, ['h1:has-text("Panel RRHH")', "main"]);
   });
 
   await capture(page, failures, "10-rrhh-vacaciones.png", async () => {
@@ -344,6 +341,8 @@ async function main() {
     if (!clicked) await goto(page, `/${DEFAULT_EMPRESA}/rrhh/vacaciones`, { tenant: DEFAULT_EMPRESA });
     await selectFirstWorkerIfAvailable(page);
     await waitAnyVisible(page, ['h1:has-text("Vacaciones")', "main"]);
+    await page.mouse.wheel(0, 220).catch(() => {});
+    await page.waitForTimeout(250);
   });
 
   await capture(page, failures, "11-chat.png", async () => {
