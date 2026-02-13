@@ -278,19 +278,19 @@ async function main() {
 
   await login(page);
 
-  await capture(page, failures, "01-dashboard.png", async () => {
+  await capture(page, failures, "v2-01-dashboard.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}`, { tenant: DEFAULT_EMPRESA });
     await waitAnyVisible(page, ['h1:has-text("Panel de empresa")', "main"]);
   });
 
-  await capture(page, failures, "02-maestros.png", async () => {
+  await capture(page, failures, "v2-02-maestros.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}`, { tenant: DEFAULT_EMPRESA });
     const usedNav = await safeClick(page, ['header a:has-text("Maestros")']);
     if (!usedNav) await goto(page, `/${DEFAULT_EMPRESA}/maestros`, { tenant: DEFAULT_EMPRESA });
     await waitAnyVisible(page, ['h1:has-text("Maestros")', "main"]);
   });
 
-  await capture(page, failures, "03-clientes.png", async () => {
+  await capture(page, failures, "v2-03-clientes.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}/maestros`, { tenant: DEFAULT_EMPRESA });
     const clicked = await safeClick(page, [
       'a:has-text("Clientes")',
@@ -300,42 +300,42 @@ async function main() {
     await waitAnyVisible(page, ['h1:has-text("Clientes")', "main"]);
   });
 
-  await capture(page, failures, "04-fichas.png", async () => {
+  await capture(page, failures, "v2-04-fichas.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}`, { tenant: DEFAULT_EMPRESA });
     const usedNav = await safeClick(page, ['header a:has-text("Fichas")']);
     if (!usedNav) await goto(page, `/${DEFAULT_EMPRESA}/fichas`, { tenant: DEFAULT_EMPRESA });
     await waitAnyVisible(page, ['h1:has-text("Fichas")', 'h1:has-text("Fichas técnicas")', "main"]);
   });
 
-  await capture(page, failures, "05-rrhh-control-horario.png", async () => {
+  await capture(page, failures, "v2-05-rrhh-control-horario.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}/rrhh/control-horario`, { tenant: DEFAULT_EMPRESA });
     await selectFirstWorkerIfAvailable(page);
     await waitAnyVisible(page, ['h1:has-text("Control horario")', "main"]);
   });
 
-  await capture(page, failures, "06-demo-tour.png", async () => {
+  await capture(page, failures, "v2-06-demo-tour.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}/demo-tour`, { tenant: DEFAULT_EMPRESA });
     await waitAnyVisible(page, ['h1:has-text("Demo Tour")', "main"]);
   });
 
   let escandalloDetailPath = null;
-  await capture(page, failures, "07-escandallo-detalle.png", async () => {
+  await capture(page, failures, "v2-07-escandallo-detalle.png", async () => {
     escandalloDetailPath = await openFirstEscandalloDetail(page, DEFAULT_EMPRESA);
     await waitAnyVisible(page, ['h1:has-text("Escandallo")', "main"]);
   });
 
-  await capture(page, failures, "08-almacen-stock.png", async () => {
+  await capture(page, failures, "v2-08-almacen-stock.png", async () => {
     const detail = escandalloDetailPath || (await openFirstEscandalloDetail(page, DEFAULT_EMPRESA));
     await goto(page, `${detail}/almacen`, { tenant: DEFAULT_EMPRESA });
     await waitAnyVisible(page, ['h1:has-text("Ficha almacén")', 'h1:has-text("Ficha almac")', "main"]);
   });
 
-  await capture(page, failures, "09-rrhh-panel.png", async () => {
+  await capture(page, failures, "v2-09-rrhh-panel.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}/rrhh`, { tenant: DEFAULT_EMPRESA });
     await waitAnyVisible(page, ['h1:has-text("Panel RRHH")', "main"]);
   });
 
-  await capture(page, failures, "10-rrhh-vacaciones.png", async () => {
+  await capture(page, failures, "v2-10-rrhh-vacaciones.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}/rrhh`, { tenant: DEFAULT_EMPRESA });
     const clicked = await safeClick(page, ['a:has-text("Vacaciones")']);
     if (!clicked) await goto(page, `/${DEFAULT_EMPRESA}/rrhh/vacaciones`, { tenant: DEFAULT_EMPRESA });
@@ -345,35 +345,35 @@ async function main() {
     await page.waitForTimeout(250);
   });
 
-  await capture(page, failures, "11-chat.png", async () => {
+  await capture(page, failures, "v2-11-chat.png", async () => {
     await goto(page, "/account");
     const clicked = await safeClick(page, ['a:has-text("Chat")', 'a[href="/account/chat"]']);
     if (!clicked) await goto(page, "/account/chat");
     await waitAnyVisible(page, ['h1:has-text("Chat")', 'div:has-text("Cuenta"):has-text("Chat")', "main"]);
   });
 
-  await capture(page, failures, "12-notificaciones.png", async () => {
+  await capture(page, failures, "v2-12-notificaciones.png", async () => {
     await goto(page, "/account");
     const clicked = await safeClick(page, ['a:has-text("Notificaciones")', 'a[href="/account/notifications"]']);
     if (!clicked) await goto(page, "/account/notifications");
     await waitAnyVisible(page, ['h1:has-text("Notificaciones")', "main"]);
   });
 
-  await capture(page, failures, "13-tools-almacen.png", async () => {
+  await capture(page, failures, "v2-13-tools-almacen.png", async () => {
     await goto(page, "/");
     const clicked = await clickFirstLinkBy(page, ({ href }) => (href || "").startsWith("/tools/almacen"));
     if (!clicked) await goto(page, "/tools/almacen");
     await waitAnyVisible(page, ['h1:has-text("Herramientas · Almacén")', "main"]);
   });
 
-  await capture(page, failures, "14-ediwin-parser.png", async () => {
+  await capture(page, failures, "v2-14-ediwin-parser.png", async () => {
     await goto(page, "/tools/almacen");
     const clicked = await clickFirstLinkBy(page, ({ href }) => href === "/tools/almacen/ediwin-parse");
     if (!clicked) await goto(page, "/tools/almacen/ediwin-parse");
     await waitAnyVisible(page, ['h1:has-text("EDIWIN Parser")', 'div:has-text("Paso 1 — Cargar PDF + previsualizar")', "main"]);
   });
 
-  await capture(page, failures, "15-globalia-uniformes.png", async () => {
+  await capture(page, failures, "v2-15-globalia-uniformes.png", async () => {
     await goto(page, "/tools/almacen");
     const clicked = await clickFirstLinkBy(page, ({ href }) => href === "/tools/almacen/globalia-stock");
     if (!clicked) await goto(page, "/tools/almacen/globalia-stock");

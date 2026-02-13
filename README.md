@@ -23,21 +23,21 @@ Demo publicable de una plataforma interna de gestion textil (multi-empresa) con 
 
 ## Screenshots
 
-![Dashboard](webapp-excel/docs/images/01-dashboard.png)
-![Maestros](webapp-excel/docs/images/02-maestros.png)
-![Clientes](webapp-excel/docs/images/03-clientes.png)
-![Fichas](webapp-excel/docs/images/04-fichas.png)
-![RRHH Control Horario](webapp-excel/docs/images/05-rrhh-control-horario.png)
-![Demo Tour](webapp-excel/docs/images/06-demo-tour.png)
-![Escandallo Detalle](webapp-excel/docs/images/07-escandallo-detalle.png)
-![Almacen Stock](webapp-excel/docs/images/08-almacen-stock.png)
-![RRHH Panel](webapp-excel/docs/images/09-rrhh-panel.png)
-![RRHH Vacaciones](webapp-excel/docs/images/10-rrhh-vacaciones.png)
-![Chat](webapp-excel/docs/images/11-chat.png)
-![Notificaciones](webapp-excel/docs/images/12-notificaciones.png)
-![Tools Almacen](webapp-excel/docs/images/13-tools-almacen.png)
-![EDIWIN Parser](webapp-excel/docs/images/14-ediwin-parser.png)
-![Globalia Uniformes](webapp-excel/docs/images/15-globalia-uniformes.png)
+![Dashboard](webapp-excel/docs/images/v2-01-dashboard.png)
+![Maestros](webapp-excel/docs/images/v2-02-maestros.png)
+![Clientes](webapp-excel/docs/images/v2-03-clientes.png)
+![Fichas](webapp-excel/docs/images/v2-04-fichas.png)
+![RRHH Control Horario](webapp-excel/docs/images/v2-05-rrhh-control-horario.png)
+![Demo Tour](webapp-excel/docs/images/v2-06-demo-tour.png)
+![Escandallo Detalle](webapp-excel/docs/images/v2-07-escandallo-detalle.png)
+![Almacen Stock](webapp-excel/docs/images/v2-08-almacen-stock.png)
+![RRHH Panel](webapp-excel/docs/images/v2-09-rrhh-panel.png)
+![RRHH Vacaciones](webapp-excel/docs/images/v2-10-rrhh-vacaciones.png)
+![Chat](webapp-excel/docs/images/v2-11-chat.png)
+![Notificaciones](webapp-excel/docs/images/v2-12-notificaciones.png)
+![Tools Almacen](webapp-excel/docs/images/v2-13-tools-almacen.png)
+![EDIWIN Parser](webapp-excel/docs/images/v2-14-ediwin-parser.png)
+![Globalia Uniformes](webapp-excel/docs/images/v2-15-globalia-uniformes.png)
 
 > Para regenerarlas: `cd webapp-excel && DEMO_TOUR_EMPRESA=northwind-demo npm run screenshots`
 
