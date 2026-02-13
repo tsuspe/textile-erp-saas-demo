@@ -24,26 +24,36 @@ type EmpresaCard = {
 };
 
 export default async function RootHome() {
-  const empresasBase = await prisma.empresa.findMany({
-    orderBy: { nombre: "asc" },
-    select: { id: true, slug: true, nombre: true },
-  });
+  let empresas: EmpresaCard[] = [];
+  let dbUnavailable = false;
 
-  // Nota: N+1, pero #empresas suele ser bajo. Si crece, lo optimizamos con agregaciones.
-  const empresas: EmpresaCard[] = await Promise.all(
-    empresasBase.map(async (e) => {
-      const [clientes, escandallos, pedidos] = await Promise.all([
-        prisma.cliente.count({ where: { empresaId: e.id } }),
-        prisma.escandallo.count({ where: { empresaId: e.id } }),
-        prisma.pedido.count({ where: { empresaId: e.id } }),
-      ]);
+  try {
+    const [empresasBase, clientesRaw, escandallosRaw, pedidosRaw] = await Promise.all([
+      prisma.empresa.findMany({
+        orderBy: { nombre: "asc" },
+        select: { id: true, slug: true, nombre: true },
+      }),
+      prisma.cliente.groupBy({ by: ["empresaId"], _count: { _all: true } }),
+      prisma.escandallo.groupBy({ by: ["empresaId"], _count: { _all: true } }),
+      prisma.pedido.groupBy({ by: ["empresaId"], _count: { _all: true } }),
+    ]);
 
-      return {
-        ...e,
-        stats: { clientes, escandallos, pedidos },
-      };
-    }),
-  );
+    const clientesByEmpresa = new Map(clientesRaw.map((r) => [r.empresaId, r._count._all]));
+    const escandallosByEmpresa = new Map(escandallosRaw.map((r) => [r.empresaId, r._count._all]));
+    const pedidosByEmpresa = new Map(pedidosRaw.map((r) => [r.empresaId, r._count._all]));
+
+    empresas = empresasBase.map((e) => ({
+      ...e,
+      stats: {
+        clientes: clientesByEmpresa.get(e.id) ?? 0,
+        escandallos: escandallosByEmpresa.get(e.id) ?? 0,
+        pedidos: pedidosByEmpresa.get(e.id) ?? 0,
+      },
+    }));
+  } catch {
+    dbUnavailable = true;
+    empresas = [];
+  }
 
   const legacy = empresas.find((e) => e.slug === "legacy");
   const activas = empresas.filter((e) => e.slug !== "legacy");
@@ -91,6 +101,12 @@ export default async function RootHome() {
 
         {/* Empresas activas */}
         <section className="space-y-4">
+          {dbUnavailable ? (
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+              La base de datos no está disponible temporalmente. Reintenta en unos segundos.
+            </div>
+          ) : null}
+
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-sm uppercase tracking-wider text-slate-500">
               Empresas activas
