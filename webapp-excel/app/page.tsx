@@ -5,6 +5,9 @@ import { isDemoMode } from "@/lib/demo-mode";
 import Link from "next/link";
 import AlmacenToolsHomeCard from "@/app/components/AlmacenToolsHomeCard";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 
 // Pon en tu .env: NEXT_PUBLIC_APP_VERSION=3.0.0
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "3.0.0";
