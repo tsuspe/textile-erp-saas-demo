@@ -24,13 +24,22 @@ Demo publicable de una plataforma interna de gestion textil (multi-empresa) con 
 ## Screenshots
 
 ![Dashboard](webapp-excel/docs/images/01-dashboard.png)
-![Clientes](webapp-excel/docs/images/02-maestros.png)
-![Stock](webapp-excel/docs/images/03-clientes.png)
-![Escandallos](webapp-excel/docs/images/04-fichas.png)
-![RRHH](webapp-excel/docs/images/05-rrhh-control-horario.png)
-![Chat + IA](webapp-excel/docs/images/06-demo-tour.png)
+![Maestros](webapp-excel/docs/images/02-maestros.png)
+![Clientes](webapp-excel/docs/images/03-clientes.png)
+![Fichas](webapp-excel/docs/images/04-fichas.png)
+![RRHH Control Horario](webapp-excel/docs/images/05-rrhh-control-horario.png)
+![Demo Tour](webapp-excel/docs/images/06-demo-tour.png)
+![Escandallo Detalle](webapp-excel/docs/images/07-escandallo-detalle.png)
+![Almacen Stock](webapp-excel/docs/images/08-almacen-stock.png)
+![RRHH Control Horario v2](webapp-excel/docs/images/09-rrhh-control-horario.png)
+![RRHH Vacaciones](webapp-excel/docs/images/10-rrhh-vacaciones.png)
+![Chat](webapp-excel/docs/images/11-chat.png)
+![Notificaciones](webapp-excel/docs/images/12-notificaciones.png)
+![Tools Almacen](webapp-excel/docs/images/13-tools-almacen.png)
+![EDIWIN Parser](webapp-excel/docs/images/14-ediwin-parser.png)
+![Globalia Uniformes](webapp-excel/docs/images/15-globalia-uniformes.png)
 
-> Las imágenes actuales son placeholders. Se pueden reemplazar por capturas reales ejecutando la app en local con las credenciales demo.
+> Para regenerarlas: `cd webapp-excel && DEMO_TOUR_EMPRESA=northwind-demo npm run screenshots`
 
 ## Credenciales demo
 
