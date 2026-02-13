@@ -95,6 +95,35 @@ async function ensureTenant(page, empresa) {
   await goto(page, `/${empresa}`);
 }
 
+async function selectFirstWorkerIfAvailable(page) {
+  const userSelect = page.locator('select[name="userId"]').first();
+  if ((await userSelect.count()) === 0) return false;
+  if (!(await userSelect.isVisible().catch(() => false))) return false;
+
+  const options = await userSelect.locator("option").all();
+  let chosen = null;
+  for (const opt of options) {
+    const v = (await opt.getAttribute("value")) || "";
+    if (v.trim()) {
+      chosen = v;
+      break;
+    }
+  }
+  if (!chosen) return false;
+
+  await userSelect.selectOption(chosen);
+  const submitted = await safeClick(page, [
+    'form:has(select[name="userId"]) button:has-text("Ver")',
+    'form[action*="control-horario"] button:has-text("Ver")',
+    'form[action*="vacaciones"] button:has-text("Ver")',
+  ]);
+  if (!submitted) {
+    await page.keyboard.press("Enter").catch(() => {});
+    await waitStable(page);
+  }
+  return true;
+}
+
 async function login(page) {
   await goto(page, "/login");
 
@@ -280,6 +309,7 @@ async function main() {
 
   await capture(page, failures, "05-rrhh-control-horario.png", async () => {
     await goto(page, `/${DEFAULT_EMPRESA}/rrhh/control-horario`, { tenant: DEFAULT_EMPRESA });
+    await selectFirstWorkerIfAvailable(page);
     await waitAnyVisible(page, ['h1:has-text("Control horario")', "main"]);
   });
 
@@ -304,6 +334,7 @@ async function main() {
     await goto(page, `/${DEFAULT_EMPRESA}/rrhh`, { tenant: DEFAULT_EMPRESA });
     const clicked = await safeClick(page, ['a:has-text("Control horario")']);
     if (!clicked) await goto(page, `/${DEFAULT_EMPRESA}/rrhh/control-horario`, { tenant: DEFAULT_EMPRESA });
+    await selectFirstWorkerIfAvailable(page);
     await waitAnyVisible(page, ['h1:has-text("Control horario")', "main"]);
   });
 
@@ -311,6 +342,7 @@ async function main() {
     await goto(page, `/${DEFAULT_EMPRESA}/rrhh`, { tenant: DEFAULT_EMPRESA });
     const clicked = await safeClick(page, ['a:has-text("Vacaciones")']);
     if (!clicked) await goto(page, `/${DEFAULT_EMPRESA}/rrhh/vacaciones`, { tenant: DEFAULT_EMPRESA });
+    await selectFirstWorkerIfAvailable(page);
     await waitAnyVisible(page, ['h1:has-text("Vacaciones")', "main"]);
   });
 
